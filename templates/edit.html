@@ -1,0 +1,119 @@
+
+<!-- templates/edit.html -->
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>{% if candidate.name %}Edit {{ candidate.name }}{% else %}New Candidate{% endif %}</h1>
+    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Back to List</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ candidate.name or '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ candidate.email or '' }}">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="phone_number" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ candidate.phone_number or '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="position" class="form-label">Position</label>
+                    <select class="form-select" id="position" name="position">
+                        <option value="" {% if not candidate.position %}selected{% endif %}>Select Position</option>
+                        <option value="React" {% if candidate.position == 'React' %}selected{% endif %}>React</option>
+                        <option value="Node" {% if candidate.position == 'Node' %}selected{% endif %}>Node</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="current_status" class="form-label">Current Status</label>
+                    <select class="form-select" id="current_status" name="current_status" required>
+                        <option value="CV Review" {% if candidate.current_status == 'CV Review' %}selected{% endif %}>CV Review</option>
+                        <option value="Phone Screen" {% if candidate.current_status == 'Phone Screen' %}selected{% endif %}>Phone Screen</option>
+                        <option value="Technical Interview" {% if candidate.current_status == 'Technical Interview' %}selected{% endif %}>Technical Interview</option>
+                        <option value="HR Interview" {% if candidate.current_status == 'HR Interview' %}selected{% endif %}>HR Interview</option>
+                        <option value="Offer Stage" {% if candidate.current_status == 'Offer Stage' %}selected{% endif %}>Offer Stage</option>
+                        <option value="Approved" {% if candidate.current_status == 'Approved' %}selected{% endif %}>Approved</option>
+                        <option value="Rejected" {% if candidate.current_status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="status_due_date" class="form-label">Status Due Date</label>
+                    <input type="date" class="form-control" id="status_due_date" name="status_due_date" value="{{ candidate.status_due_date|format_date if candidate.status_due_date }}">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="assignee" class="form-label">Assignee</label>
+                    <input type="text" class="form-control" id="assignee" name="assignee" value="{{ candidate.assignee or '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-check mt-4">
+                        <input class="form-check-input" type="checkbox" id="notified" name="notified" {% if candidate.notified %}checked{% endif %}>
+                        <label class="form-check-label" for="notified">
+                            Candidate Notified
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="fail_stage" class="form-label">Failed Stage</label>
+                    <select class="form-select" id="fail_stage" name="fail_stage">
+                        <option value="" {% if not candidate.fail_stage %}selected{% endif %}>Not Failed</option>
+                        <option value="CV Review" {% if candidate.fail_stage == 'CV Review' %}selected{% endif %}>CV Review</option>
+                        <option value="Phone Screen" {% if candidate.fail_stage == 'Phone Screen' %}selected{% endif %}>Phone Screen</option>
+                        <option value="Technical Interview" {% if candidate.fail_stage == 'Technical Interview' %}selected{% endif %}>Technical Interview</option>
+                        <option value="HR Interview" {% if candidate.fail_stage == 'HR Interview' %}selected{% endif %}>HR Interview</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="failed_reason" class="form-label">Failed Reason</label>
+                <textarea class="form-control" id="failed_reason" name="failed_reason" rows="3" maxlength="500">{{ candidate.failed_reason or '' }}</textarea>
+                <div class="form-text">Up to 500 characters</div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="source_notes" class="form-label">Source Notes</label>
+                <textarea class="form-control" id="source_notes" name="source_notes" rows="3" maxlength="500">{{ candidate.source_notes or '' }}</textarea>
+                <div class="form-text">Up to 500 characters</div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">CV File</label>
+                <div>
+                    {% if candidate.cv_file %}
+                        <a href="{{ url_for('static', filename='uploads/' + candidate.cv_file) }}" target="_blank">{{ candidate.cv_file }}</a>
+                    {% else %}
+                        No file uploaded
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Last Updated</label>
+                <div>{{ candidate.last_updated|format_date('%Y-%m-%d %H:%M:%S') }}</div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

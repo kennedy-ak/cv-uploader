@@ -1,0 +1,73 @@
+
+<!-- templates/index.html -->
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Candidate Database</h1>
+    <a href="{{ url_for('upload_cv') }}" class="btn btn-primary">Upload New CV</a>
+</div>
+
+{% if candidates %}
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Date Uploaded</th>
+                <th>Current Status</th>
+                <th>Status Due Date</th>
+                <th>Assignee</th>
+                <th>Position</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in candidates %}
+            <tr class="{% if candidate.current_status == 'Rejected' %}status-rejected{% elif candidate.current_status == 'Approved' %}status-approved{% elif candidate.current_status == 'CV Review' %}status-pending{% endif %}">
+                <td>{{ candidate.name or 'N/A' }}</td>
+                <td>{{ candidate.email or 'N/A' }}</td>
+                <td>{{ candidate.phone_number or 'N/A' }}</td>
+                <td>{{ candidate.date|format_date }}</td>
+                <td>{{ candidate.current_status }}</td>
+                <td>{{ candidate.status_due_date|format_date if candidate.status_due_date else 'Not set' }}</td>
+                <td>{{ candidate.assignee or 'Unassigned' }}</td>
+                <td>{{ candidate.position or 'Not specified' }}</td>
+                <td>
+                    <a href="{{ url_for('edit_candidate', id=candidate.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ candidate.id }}">Delete</button>
+                    
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteModal{{ candidate.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Confirm Delete</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete {{ candidate.name or 'this candidate' }}?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form action="{{ url_for('delete_candidate', id=candidate.id) }}" method="post">
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    No candidates in the database yet. <a href="{{ url_for('upload_cv') }}">Upload a CV</a> to get started.
+</div>
+{% endif %}
+{% endblock %}
