@@ -19,7 +19,7 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
 
-# Define the Candidate model
+
 class Candidate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
@@ -40,7 +40,7 @@ class Candidate(db.Model):
     def __repr__(self):
         return f'<Candidate {self.name}>'
 
-# Function to extract text from PDF
+
 def extract_text_from_pdf(pdf_path):
     text = ""
     with open(pdf_path, 'rb') as file:
@@ -49,7 +49,7 @@ def extract_text_from_pdf(pdf_path):
             text += page.extract_text()
     return text
 
-# Function to extract text from DOCX
+
 def extract_text_from_docx(docx_path):
     doc = docx.Document(docx_path)
     text = ""
@@ -57,26 +57,26 @@ def extract_text_from_docx(docx_path):
         text += paragraph.text + "\n"
     return text
 
-# Function to extract information from CV text
+
 def extract_cv_info(text):
-    # Sample extraction patterns (improve these for better accuracy)
+
     email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
     phone_pattern = r'(\+\d{1,3}[\s-]?)?(\(?\d{3}\)?[\s-]?)?\d{3}[\s-]?\d{4}'
     name_pattern = r'^([A-Z][a-z]+([\s-][A-Z][a-z]+)+)'
     
-    # Extract information
+    #n
     email = re.search(email_pattern, text)
     phone = re.search(phone_pattern, text)
     name = re.search(name_pattern, text, re.MULTILINE)
     
-    # Get the first 100 chars to help find the name if pattern didn't work
+
     first_part = text[:100]
     
     return {
         'name': name.group(0) if name else None,
         'email': email.group(0) if email else None,
         'phone': phone.group(0) if phone else None,
-        'first_part': first_part  # For debugging or manual extraction
+        'first_part': first_part  
     }
 
 # Initialize the database
