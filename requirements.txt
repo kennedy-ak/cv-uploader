@@ -3,3 +3,4 @@ flask-sqlalchemy
 werkzeug
 PyPDF2
 python-docx
+gunicorn
